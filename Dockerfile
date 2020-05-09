@@ -10,4 +10,4 @@ RUN cd ${WORKSPACE} && poetry install
 
 WORKDIR ${WORKSPACE}
 
-CMD ["python", "example.py"]
+CMD ["python", "src/main.py"]
