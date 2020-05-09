@@ -17,6 +17,8 @@ To start app locally:
 
 ### `/v1/register`
 
+Used to register
+
 Params (`x-www-form-url-encoded`):
 
 - `username`
@@ -24,6 +26,8 @@ Params (`x-www-form-url-encoded`):
 - `email`
 
 ### `/v1/login`
+
+Used to get accessToken from credentials
 
 Params (`x-www-form-url-encoded`):
 
@@ -34,12 +38,14 @@ Response:
 
 ```json
 {
-  "authToken": "ey...",
+  "accessToken": "ey...",
   "refreshToken": "ey..."
 }
 ```
 
 ### `/v1/refresh-token`
+
+Used to refresh accessToken
 
 Headers:
 
@@ -49,15 +55,32 @@ Response:
 
 ```json
 {
-  "authToken": "ey...",
+  "accessToken": "ey...",
   "refreshToken": "ey..."
 }
 ```
 
 ### `/v1/public-key`
 
+Gets public key for signature validation
+
 ```json
 {
   "key": "<public key used for tokens signing>"
+}
+```
+
+### `/v1/me`
+
+Gets logged user data
+
+Headers:
+
+- `Authorization: Bearer <accessToken>`
+
+```json
+{
+  "username": "<username>",
+  "email": "<email>"
 }
 ```
