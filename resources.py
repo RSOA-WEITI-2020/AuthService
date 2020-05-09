@@ -72,3 +72,16 @@ class TokenRefresh(Resource):
 class PublicKey(Resource):
     def get(self):
         return {'key': public_key}  
+
+class UserMe(Resource):
+    @jwt_required
+    def get(self):
+        user_id = get_jwt_identity()
+        user = user_storage.get_user_by_id(user_id)
+        if user == None:
+            abort(403)
+
+        return {
+            'username': user.username,
+            'email': user.email
+        }  
