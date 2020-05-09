@@ -71,7 +71,9 @@ class TokenRefresh(Resource):
 
 class PublicKey(Resource):
     def get(self):
-        return {'key': public_key}  
+        key = public_key
+        key = key.replace('-----BEGIN PUBLIC KEY-----', '').replace('-----END PUBLIC KEY-----', '').replace('\n', '')
+        return {'key': key}  
 
 class UserMe(Resource):
     @jwt_required
