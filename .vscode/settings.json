@@ -1,0 +1,4 @@
+{
+    "python.pythonPath": "D:\\LIBS\\Python\\Python38\\python.exe",
+    "python.formatting.provider": "black"
+}
