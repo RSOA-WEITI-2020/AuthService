@@ -1,7 +1,7 @@
 import hashlib
 from flask_restful import Resource, reqparse, abort
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
-from app import user_storage, jwt, public_key
+from main import user_storage, jwt, public_key
 from models import User
 
 

@@ -6,12 +6,22 @@ Master status: ![](https://github.com/RSOA-WEITI-2020/PythonProjectTemplate/work
 Develop status: ![](https://github.com/RSOA-WEITI-2020/PythonProjectTemplate/workflows/Tests/badge.svg?branch=develop)
 
 Keys included in `/keys` directory are for testing purposes only and should be changed before deploy!
+Key pathcould be set during `docker build` by adding params:
+
+- `--build-arg PUBLIC_KEY=<path_to_public_key> --build-arg PRIVATE_KEY=<path_to_private_key>`.
+
+Key files can be generated with:
+
+```shell
+ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key
+openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
+```
 
 To start app locally:
 
 - run `poetry install`
 - run `poetry shell`
-- run `flask run`
+- run `cd app && python main.py`
 
 ## Available endpoints
 
