@@ -1,13 +1,14 @@
-FROM python:3
+FROM tiangolo/uwsgi-nginx-flask:python3.8
 
-ENV WORKSPACE="/rosa/app/source/"
+ARG PRIVATE_KEY=./keys/jwtRS256.key
+ARG PUBLIC_KEY=./keys/jwtRS256.key.pub
 
-ADD *.py ${WORKSPACE}
-ADD pyproject.toml ${WORKSPACE}
+COPY ./app /app
+ADD pyproject.toml /
+
+COPY $PRIVATE_KEY ${WORKSPACE}/keys/jwtRS256.key
+COPY $PUBLIC_KEY ${WORKSPACE}/keys/jwtRS256.key.pub
 
 RUN pip3 install poetry
-RUN cd ${WORKSPACE} && poetry install
-
-WORKDIR ${WORKSPACE}
-
-CMD ["python", "src/main.py"]
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-dev

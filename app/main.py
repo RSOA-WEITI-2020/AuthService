@@ -10,10 +10,10 @@ api = Api(app)
 private_key = ''
 public_key = ''
 
-with open('keys/jwtRS256.key', 'r') as content_file:
+with open('../keys/jwtRS256.key', 'r') as content_file:
     private_key = content_file.read()
 
-with open('keys/jwtRS256.key.pub', 'r') as content_file:
+with open('../keys/jwtRS256.key.pub', 'r') as content_file:
     public_key = content_file.read()
 
 app.config['JWT_ALGORITHM'] = 'RS256'
@@ -25,7 +25,6 @@ app.config['JWT_CLAIMS_IN_REFRESH_TOKEN'] = False
 app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
 app.config['JWT_TOKEN_LOCATION'] = ('headers', 'cookies')
 
-
 jwt = JWTManager(app)
 
 user_storage = UserStorage()
@@ -34,4 +33,4 @@ session_storage = SessionStorage()
 import models, routes, resources
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
