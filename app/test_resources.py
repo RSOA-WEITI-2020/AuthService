@@ -1,11 +1,12 @@
 import unittest
-from main import app
+import app
 
 
 class RegistrationTest(unittest.TestCase):
 
     def setUp(self):
-        self.app = app.test_client()
+        self.app = app.create_app(
+            'sqlite:////tmp/test.db', '../keys').test_client()
 
     def test_should_success_registration(self):
         payload = {
