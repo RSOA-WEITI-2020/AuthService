@@ -1,11 +1,8 @@
+from extensions import db
 
-class User():
-    id = 0
-    username = ""
-    passwordHash = ""
-    email = ""
 
-    def __init__(self, username, passwordHash, email):
-        self.username = username
-        self.passwordHash = passwordHash
-        self.email = email
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(300), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
