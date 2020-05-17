@@ -1,12 +1,19 @@
 import unittest
+import os
 import app
+import models
 
 
 class RegistrationTest(unittest.TestCase):
 
     def setUp(self):
-        self.app = app.create_app(
-            'sqlite:////tmp/test.db', '../keys').test_client()
+        app_dir = os.path.dirname(os.path.realpath(__file__))
+        db_uri = 'sqlite:///' + app_dir + '/testing_db.db'
+        try:
+            os.remove(app_dir+'/testing_db.db')
+        except:
+            print('db file not found')
+        self.app = app.create_app(db_uri, '../keys').test_client()
 
     def test_should_success_registration(self):
         payload = {
@@ -19,3 +26,10 @@ class RegistrationTest(unittest.TestCase):
 
         self.assertEqual('ok', response.json['message'])
         self.assertEqual(200, response.status_code)
+
+    def tearDown(self):
+        app_dir = os.path.dirname(os.path.realpath(__file__))
+        try:
+            os.remove(app_dir+'/testing_db.db')
+        except:
+            print('db file not found')
