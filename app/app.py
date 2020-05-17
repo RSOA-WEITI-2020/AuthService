@@ -34,6 +34,7 @@ def create_app(db_uri, keys_dir_path):
     jwt.init_app(app)
     db.init_app(app)
 
+    import models
     with app.app_context():
         db.create_all()
 

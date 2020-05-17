@@ -1,7 +1,6 @@
 import unittest
 import os
 import app
-import models
 
 
 class RegistrationTest(unittest.TestCase):

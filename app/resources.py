@@ -1,9 +1,4 @@
-from models import User
-from extensions import (
-    jwt,
-    db,
-)
-
+import random
 import hashlib
 from typing import (
     MutableMapping,
@@ -21,6 +16,11 @@ from flask_jwt_extended import (
     jwt_refresh_token_required,
     get_jwt_identity,
     get_raw_jwt
+)
+from models import User
+from extensions import (
+    jwt,
+    db,
 )
 
 
@@ -66,10 +66,17 @@ class UserRegistration(BaseResource):
         username = data['username']
         password = data['password']
         email = data['email']
-        password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
-        user = User(username=username,
-                    password_hash=password_hash,
-                    email=email)
+        password_salt = ''.join(random.choice('0123456789ABCDEF')
+                                for i in range(16))
+        password_with_salt = password + password_salt
+        password_hash = hashlib.sha256(
+            password_with_salt.encode('utf-8')).hexdigest()
+        user = User(
+            username=username,
+            password_hash=password_hash,
+            password_salt=password_salt,
+            email=email,
+        )
         db.session.add(user)
         db.session.commit()
         return {'message': 'ok'}
@@ -89,10 +96,17 @@ class UserLogin(BaseResource):
         data = self.parser.parse_args()
         username = data['username']
         password = data['password']
-        password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
         user = User.query.filter_by(username=username).first()
-        if user is None or user.password_hash != password_hash:
+        if user is None:
+            abort(403, message="invalid credentials")
+
+        password_salt = user.password_salt
+        password_with_salt = password + password_salt
+        password_hash = hashlib.sha256(
+            password_with_salt.encode('utf-8')).hexdigest()
+
+        if user.password_hash != password_hash:
             abort(403, message="invalid credentials")
 
         result = {
