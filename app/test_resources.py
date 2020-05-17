@@ -12,7 +12,7 @@ class RegistrationTest(unittest.TestCase):
             os.remove(app_dir+'/testing_db.db')
         except:
             print('db file not found')
-        self.app = app.create_app(db_uri, '../keys').test_client()
+        self.app = app.create_app(db_uri, app_dir + '/../keys').test_client()
 
     def test_should_success_registration(self):
         payload = {
