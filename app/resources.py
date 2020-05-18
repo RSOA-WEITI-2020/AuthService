@@ -1,9 +1,8 @@
-import random
-import hashlib
 from typing import (
     MutableMapping,
     Type,
 )
+import bcrypt
 from flask_restful import (
     Resource,
     reqparse,
@@ -66,19 +65,20 @@ class UserRegistration(BaseResource):
         username = data['username']
         password = data['password']
         email = data['email']
-        password_salt = ''.join(random.choice('0123456789ABCDEF')
-                                for i in range(16))
-        password_with_salt = password + password_salt
-        password_hash = hashlib.sha256(
-            password_with_salt.encode('utf-8')).hexdigest()
+        password_hash = bcrypt.hashpw(
+            password.encode('utf-8'), bcrypt.gensalt()).hex()
         user = User(
             username=username,
             password_hash=password_hash,
-            password_salt=password_salt,
             email=email,
         )
-        db.session.add(user)
-        db.session.commit()
+
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except:
+            abort(409)
+
         return {'message': 'ok'}
 
 
@@ -101,12 +101,9 @@ class UserLogin(BaseResource):
         if user is None:
             abort(403, message="invalid credentials")
 
-        password_salt = user.password_salt
-        password_with_salt = password + password_salt
-        password_hash = hashlib.sha256(
-            password_with_salt.encode('utf-8')).hexdigest()
+        password_hash = bytes.fromhex(user.password_hash)
 
-        if user.password_hash != password_hash:
+        if not bcrypt.checkpw(password.encode('utf-8'), password_hash):
             abort(403, message="invalid credentials")
 
         result = {
