@@ -17,7 +17,7 @@ jobs:
           # Username used to log in to a Docker registry. If not set then no login will occur
           username: ${{ secrets.USR }} # optional
           # Password or personal access token used to log in to a Docker registry. If not set then no login will occur
-          password: ${{ secrets.PWD }} # optional
+          password: ${{ secrets.PSW }} # optional
           repository: rpwtouk/rosaauth
           # Automatically tags the built image with the git reference as per the readme
           tag_with_ref: true # optional
