@@ -26,7 +26,7 @@ from extensions import (
 @jwt.user_claims_loader
 def add_claims_to_access_token(user: User):
     return {
-        'username': user.username,
+        'email': user.email,
     }
 
 
@@ -54,23 +54,32 @@ class UserRegistration(BaseResource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument(
-            'username', help='This field cannot be blank', required=True)
-        self.parser.add_argument(
             'password', help='This field cannot be blank', required=True)
         self.parser.add_argument(
             'email', help='This field cannot be blank', required=True)
+        self.parser.add_argument(
+            'first_name', help='This field cannot be blank', required=True)
+        self.parser.add_argument(
+            'last_name', help='This field cannot be blank', required=True)
+        self.parser.add_argument(
+            'address', help='This field cannot be blank', required=True)
 
     def post(self):
         data = self.parser.parse_args()
-        username = data['username']
         password = data['password']
         email = data['email']
+        first_name = data['first_name']
+        last_name = data['last_name']
+        address = data['address']
         password_hash = bcrypt.hashpw(
             password.encode('utf-8'), bcrypt.gensalt()).hex()
         user = User(
-            username=username,
-            password_hash=password_hash,
+            password=password_hash,
             email=email,
+            balance=0,
+            first_name=first_name,
+            last_name=last_name,
+            address=address,
         )
 
         try:
@@ -88,20 +97,20 @@ class UserLogin(BaseResource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument(
-            'username', help='This field cannot be blank', required=True)
+            'email', help='This field cannot be blank', required=True)
         self.parser.add_argument(
             'password', help='This field cannot be blank', required=True)
 
     def post(self):
         data = self.parser.parse_args()
-        username = data['username']
+        email = data['email']
         password = data['password']
 
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(email=email).first()
         if user is None:
             abort(403, message="invalid credentials")
 
-        password_hash = bytes.fromhex(user.password_hash)
+        password_hash = bytes.fromhex(user.password)
 
         if not bcrypt.checkpw(password.encode('utf-8'), password_hash):
             abort(403, message="invalid credentials")
@@ -141,6 +150,5 @@ class UserMe(BaseResource):
             abort(403)
 
         return {
-            'username': user.username,
             'email': user.email
         }

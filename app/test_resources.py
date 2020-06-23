@@ -16,9 +16,11 @@ class RegistrationTest(unittest.TestCase):
 
     def test_should_success_registration(self):
         payload = {
-            "username": "test",
             "password": "abc1234",
-            "email": "test@test.com"
+            "email": "test@test.com",
+            "first_name": "abc",
+            "last_name": "def",
+            "address": "ghi"
         }
 
         response = self.app.post('/v1/register', data=payload)
