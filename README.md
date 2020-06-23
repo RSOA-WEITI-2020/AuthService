@@ -23,6 +23,14 @@ To start app locally:
 - run `poetry shell`
 - run `cd app && python main.py`
 
+To start app in docker container with separate database in another container:
+- create docker network \
+  `docker network create develop`
+- run mysql server \
+  `docker run -p 3306:3306 -e MYSQL_ROOT_HOST=% -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=user_db --network=develop --name user_database mysql/mysql-server`
+- run built auth service image \
+  `docker run -p 80:80 --network=develop auth_service`
+
 ## Available endpoints
 
 ### `/v1/register`
@@ -31,9 +39,11 @@ Used to register
 
 Params (`x-www-form-url-encoded`):
 
-- `username`
-- `password`
 - `email`
+- `password`
+- `first_name`
+- `last_name`
+- `address`
 
 ### `/v1/login`
 
@@ -41,7 +51,7 @@ Used to get accessToken from credentials
 
 Params (`x-www-form-url-encoded`):
 
-- `username`
+- `email`
 - `password`
 
 Response:
@@ -90,7 +100,6 @@ Headers:
 
 ```json
 {
-  "username": "<username>",
   "email": "<email>"
 }
 ```
