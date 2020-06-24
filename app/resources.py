@@ -157,6 +157,52 @@ class UserMe(BaseResource):
         }
 
 
+class UpdateUserData(BaseResource):
+    path = "/v1/updatedata"
+
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument(
+            'email', help='This field cannot be blank')
+        self.parser.add_argument(
+            'first_name', help='This field cannot be blank')
+        self.parser.add_argument(
+            'last_name', help='This field cannot be blank')
+        self.parser.add_argument(
+            'address', help='This field cannot be blank')
+
+    @jwt_required
+    def post(self):
+        user_id = get_jwt_identity()
+        user = User.query.filter_by(id=user_id).first()
+        if user is None:
+            abort(403)
+
+        data = self.parser.parse_args()
+        email = data['email']
+        first_name = data['first_name']
+        last_name = data['last_name']
+        address = data['address']
+
+        if email is None and first_name is None and last_name is None and address is None:
+            return { 'message': 'Any fields of (email, first_name, last_name, address) should be specified' }, 400
+
+        try:
+            if email is not None:
+                user.email = email
+            if first_name is not None:
+                user.first_name = first_name
+            if last_name is not None:
+                user.last_name = last_name
+            if address is not None:
+                user.address = address
+            db.session.commit()
+        except:
+            abort(500)
+
+        return { 'message': 'ok' }
+
+
 class ChangePassword(BaseResource):
     path = "/v1/changepassword"
 
