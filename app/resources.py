@@ -21,6 +21,11 @@ from extensions import (
     jwt,
     db,
 )
+from password_strength import PasswordPolicy
+
+policy = PasswordPolicy.from_names(
+    strength=0.5
+)
 
 @jwt.user_claims_loader
 def add_claims_to_access_token(user: User):
@@ -70,6 +75,10 @@ class UserRegistration(BaseResource):
         first_name = data['first_name']
         last_name = data['last_name']
         address = data['address']
+
+        if policy.password(password).test():
+            return { 'message': 'Password is not strong enough' }, 400
+
         password_hash = bcrypt.hashpw(
             password.encode('utf-8'), bcrypt.gensalt()).hex()
         user = User(
@@ -220,6 +229,9 @@ class ChangePassword(BaseResource):
         user = User.query.filter_by(id=user_id).first()
         if user is None:
             abort(403)
+
+        if policy.password(password).test():
+            return { 'message': 'Password is not strong enough' }, 400
 
         password_hash = bcrypt.hashpw(
             password.encode('utf-8'), bcrypt.gensalt()).hex()
