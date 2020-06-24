@@ -22,7 +22,6 @@ from extensions import (
     db,
 )
 
-
 @jwt.user_claims_loader
 def add_claims_to_access_token(user: User):
     return {
@@ -150,5 +149,9 @@ class UserMe(BaseResource):
             abort(403)
 
         return {
-            'email': user.email
+            'email': user.email,
+            'balance': float(user.balance),
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'address': user.address,
         }
