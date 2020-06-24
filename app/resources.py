@@ -155,3 +155,33 @@ class UserMe(BaseResource):
             'last_name': user.last_name,
             'address': user.address,
         }
+
+
+class ChangePassword(BaseResource):
+    path = "/v1/changepassword"
+
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument(
+            'password', help='This field cannot be blank', required=True)
+
+    @jwt_required
+    def post(self):
+        data = self.parser.parse_args()
+        password = data['password']
+
+        user_id = get_jwt_identity()
+        user = User.query.filter_by(id=user_id).first()
+        if user is None:
+            abort(403)
+
+        password_hash = bcrypt.hashpw(
+            password.encode('utf-8'), bcrypt.gensalt()).hex()
+
+        try:
+            user.password = password_hash
+            db.session.commit()
+        except:
+            abort(500)
+
+        return { 'message': 'ok' }

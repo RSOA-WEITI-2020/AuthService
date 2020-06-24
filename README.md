@@ -103,3 +103,17 @@ Headers:
   "email": "<email>"
 }
 ```
+
+### `/v1/changepassword`
+
+Used to change password
+
+- `password`
+
+Response:
+
+```json
+{
+  "message": "ok"
+}
+```
