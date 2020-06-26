@@ -26,6 +26,8 @@ def create_app(db_uri, keys_dir_path):
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    app.config['PROPAGATE_EXCEPTIONS'] = True
+
     from extensions import (
         api,
         jwt,
